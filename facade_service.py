@@ -11,10 +11,6 @@ app = Flask(__name__)
 
 @app.route('/facade_service', methods=['POST'])
 def post_message():
-    """
-    Handle POST requests that log a message to the logging service
-    and return a JSON response containing the message ID and message.
-    """
 
     # Extract the message content from the request JSON object
     msg = request.json['msg']
@@ -32,10 +28,6 @@ def post_message():
 
 @app.route('/facade_service', methods=['GET'])
 def get_messages():
-    """
-    Handle GET requests to the logging service and the messages service
-    and return the combined result as a JSON response.
-    """
 
     logging_response = requests.get(logging_service_url + "/log")
     messages_response = requests.get(messages_service_url + "/msg")
