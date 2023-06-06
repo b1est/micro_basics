@@ -1,6 +1,6 @@
 hazelcast:
   map:
-    my-distributed-map:
+    messages:
       backup-count: 1
   queue:
     queue:

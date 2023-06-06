@@ -1,0 +1,11 @@
+FROM python:3
+
+WORKDIR /app
+
+COPY src/facade_service.py .
+
+RUN pip install flask hazelcast requests uuid
+
+EXPOSE 8081
+
+CMD ["python", "facade_service.py"]

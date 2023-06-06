@@ -1,13 +1,13 @@
-from flask import Flask, jsonify, request
-
+from flask import Flask, jsonify, request, make_response
+from hazelcast import HazelcastClient
 app = Flask(__name__)
-messages = {}
+
 
 @app.route('/log', methods=['POST'])
 def post_message():
     msg_id = request.form.get('id')
     msg = request.form.get('msg')
-    messages[msg_id] = msg
+    messages.put(msg_id, msg)
     print(msg)
     return jsonify({'id': msg_id})
 
@@ -16,4 +16,7 @@ def get_messages():
     return jsonify(list(messages.values()))
 
 if __name__ == '__main__':
+    client = HazelcastClient()
+    messages = client.get_map("messages").blocking()
     app.run(port=8081)
+    

@@ -1,10 +1,10 @@
-POST http://localhost:8080/facade_service
+POST http://localhost:5000/facade_service
 Content-Type: application/json
 
 {
-    "msg" : "msg"
+    "msg" : "msg1"
 }
 
 ###
 
-GET http://localhost:8080/facade_service
+GET http://localhost:5000/facade_service
