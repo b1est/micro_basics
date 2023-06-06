@@ -86,54 +86,55 @@ def put_data_in_map_tasks(backup_count: int = 1) -> None:
 
     if input("Start distributed map and 3 nodes? (y/n): ") == 'y':
         os.system('docker compose up -d')
-        print("Distributed map and 3 nodes:")
+        print(f"Distributed map and 3 nodes: (backup-count = {backup_count})")
         set_data()
         check_map_data()
-        sleep(180)
+        input("Press Enter to continue...")
         os.system('docker kill hazelcast1 hazelcast2 hazelcast3')
         os.system('docker rm hazelcast1 hazelcast2 hazelcast3')
         os.system('cls')
     if input("Start distributed map and 2 nodes? (y/n): ") == 'y':
         os.system('docker compose up -d')
-        print("Distributed map and 2 nodes:")
+        print(f"Distributed map and 2 nodes: (backup-count = {backup_count})")
         os.system('docker kill hazelcast3')
         set_data()
         check_map_data()
-        sleep(180)
+        input("Press Enter to continue...")
         os.system('docker kill hazelcast1 hazelcast2')
         os.system('docker rm hazelcast1 hazelcast2 hazelcast3')
         os.system('cls')
     if input("Start distributed map and 1 nodes? (y/n): ") == 'y':
         os.system('docker compose up -d')
-        print("Distributed map and 1 nodes:")
+        print(f"Distributed map and 1 nodes: (backup-count = {backup_count})")
         os.system('docker kill hazelcast2 hazelcast3')
         set_data()
         check_map_data()
-        sleep(180)
+        input("Press Enter to continue...")
         os.system('docker kill hazelcast1')
         os.system('docker rm hazelcast1 hazelcast2 hazelcast3')
         os.system('cls')
     if backup_count == 1:
         if input("Begin no lock write? (y/n): ") == 'y':
             os.system('docker compose up -d')
-            os.system('docker kill hazelcast2 hazelcast3')
             async_write(no_lock)
-            sleep(180)
+            input("Press Enter to continue...")
             os.system('docker kill hazelcast1')
+            os.system('docker kill hazelcast1 hazelcast2 hazelcast3')
             os.system('docker rm hazelcast1 hazelcast2 hazelcast3')
         if input("Begin pessimistic write? (y/n): ") == 'y':
             os.system('docker compose up -d')
-            os.system('docker kill hazelcast2 hazelcast3')
             async_write(pessimistic_lock)
-            sleep(180)
-            os.system('docker kill hazelcast1')
+            input("Press Enter to continue...")
+            os.system('docker kill hazelcast1 hazelcast2 hazelcast3')
             os.system('docker rm hazelcast1 hazelcast2 hazelcast3')
         if input("Begin optimistic write? (y/n): ") == 'y':
             os.system('docker compose up -d')
             os.system('docker kill hazelcast2 hazelcast3')
             async_write(optimistic_lock)
-            sleep(180)
-            os.system('docker kill hazelcast1')
+            input("Press Enter to continue...")
+
+            os.system('docker kill hazelcast1 hazelcast2 hazelcast3')
+            os.system('docker rm hazelcast1 hazelcast2 hazelcast3')
     os.system('docker kill hazelcast1 hazelcast2 hazelcast3 hazelcast-management-center')
     os.system('docker rm hazelcast1 hazelcast2 hazelcast3 hazelcast-management-center')
     os.system('cls')
@@ -158,7 +159,6 @@ def consumer_member(consumer_string: str) -> None:
         if item == -1:
             queue.put(-1)
             break
-        sleep(5)
     print(f"{consumer_string} Finished!")
     client.shutdown()
 
@@ -181,18 +181,19 @@ def async_queue_write(read: bool = True) -> None:
         producer.start()
         producer.join()
     
-    sleep(180)
+    input("Press Enter to continue...")
 
     os.system('docker kill hazelcast1 hazelcast2 hazelcast3')
     os.system('docker rm hazelcast1 hazelcast2 hazelcast3')
 
 
 def main() -> None:
-    put_data_in_map_tasks(2)
+    
     put_data_in_map_tasks(1)
     put_data_in_map_tasks(0)
+    put_data_in_map_tasks(2)
     async_queue_write()
-    async_queue_write(False)
+    async_queue_write(False) 
 
         
     

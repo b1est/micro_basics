@@ -1,13 +1,7 @@
 hazelcast:
   map:
     my-distributed-map:
-      async-backup-count: 0
       backup-count: 1
-      eviction-policy: LRU
-      in-memory-format: BINARY
-      max-size:
-        max-size: 10000
-        policy: PER_NODE
   queue:
     queue:
       max-size: 5
