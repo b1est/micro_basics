@@ -1,0 +1,7 @@
+hazelcast:
+  map:
+    my-distributed-map:
+      backup-count: 1
+  queue:
+    queue:
+      max-size: 5
