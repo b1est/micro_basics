@@ -3,6 +3,7 @@ FROM python:3
 WORKDIR /app
 
 COPY src/logging_service.py .
+
 RUN pip install flask hazelcast-python-client
 
 CMD ["python", "logging_service.py"]

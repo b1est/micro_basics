@@ -2,7 +2,7 @@ POST http://localhost:5000/facade_service
 Content-Type: application/json
 
 {
-    "msg" : "msg1"
+    "msg" : "msg3"
 }
 
 ###

@@ -1,10 +1,12 @@
 from flask import Flask, jsonify, request, make_response
+from hazelcast import HazelcastClient
+import os
 import requests
 import random
 import uuid
 
 logging_service_url = ['http://logging-service1:8081/log', 'http://logging-service2:8081/log', 'http://logging-service3:8081/log']
-messages_service_url = 'http://messages-service:8000/msg'
+messages_service_url = ['http://messages-service1:8000/msg', 'http://messages-service2:8000/msg']
 
 app = Flask(__name__)
 
@@ -16,6 +18,7 @@ def post_message():
     payload = {'id': msg_id, 'msg': msg}
     url_random = random.choice(logging_service_url)
     requests.post(url=url_random, data=payload)
+    queue.put(payload)
     return make_response(f"Success")
 
 
@@ -29,10 +32,16 @@ def get_messages():
         else:
             break
    
-    messages_response = requests.get(messages_service_url)
+    messages_response = requests.get(random.choice(messages_service_url))
 
     return jsonify(logging_response.json() + messages_response.json())
 
 
 if __name__ == '__main__':
+    client = HazelcastClient(
+            cluster_members=[
+                os.getenv("HAZELCAST_IP")
+            ]
+    )
+    queue = client.get_queue("queue").blocking()
     app.run(host = "0.0.0.0", port=5000, debug=True)

@@ -4,18 +4,32 @@ services:
   facade-service:
     image: facade-service:1.0
     container_name: facade-service
+    environment:
+      - HAZELCAST_IP=hazelcast1:5701
     networks:
       - service-network
     ports:
       - 5000:5000
 
-  messages-service:
+  messages-service1:
     image: messages-service:1.0
-    container_name: messages-service
+    container_name: messages-service1
+    environment:
+      - HAZELCAST_IP=hazelcast2:5701
     networks:
       - service-network
     ports:
       - 8003:8000
+  
+  messages-service2:
+    image: messages-service:1.0
+    container_name: messages-service2
+    environment:
+      - HAZELCAST_IP=hazelcast2:5701
+    networks:
+      - service-network
+    ports:
+      - 8004:8000
 
   logging-service1:
     image: logging-service:1.0

@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY src/messages_service.py .
 
-RUN pip install flask
+RUN pip install flask hazelcast-python-client
 
 CMD ["python", "messages_service.py"]

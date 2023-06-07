@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY src/facade_service.py .
 
-RUN pip install flask hazelcast requests uuid
+RUN pip install flask hazelcast-python-client requests uuid
 
 CMD ["python", "facade_service.py"]
