@@ -18,5 +18,5 @@ def get_messages():
 if __name__ == '__main__':
     client = HazelcastClient()
     messages = client.get_map("messages").blocking()
-    app.run(port=8081)
+    app.run(port=8081, debug=True)
     

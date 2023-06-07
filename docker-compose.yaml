@@ -5,77 +5,60 @@ services:
     image: facade-service:1.0
     container_name: facade-service
     networks:
-      service-network:
-        ipv4_address: 192.168.0.101
+      - service-network
     ports:
       - 5000:5000
-    deploy:
-      replicas: 1
 
   messages-service:
     image: messages-service:1.0
     container_name: messages-service
     networks:
-      service-network:
-        ipv4_address: 192.168.0.103
+      - service-network
     ports:
-      - 8003:8003
-    deploy:
-      replicas: 1
+      - 8003:8000
 
   logging-service1:
     image: logging-service:1.0
     container_name: logging-service1
     environment:
-      - HAZELCAST_IP=192.168.0.11:5701
+      - HAZELCAST_IP=hazelcast1:5701
     networks:
-      service-network:
-        ipv4_address: 192.168.0.112
+      - service-network
     ports:
-      - 8012:8002
-    deploy:
-      replicas: 1
+      - 8012:8081
 
   logging-service2:
     image: logging-service:1.0
     container_name: logging-service2
     environment:
-      - HAZELCAST_IP=192.168.0.12:5701
+      - HAZELCAST_IP=hazelcast2:5701
     networks:
-      service-network:
-        ipv4_address: 192.168.0.122
+      - service-network
     ports:
-      - 8022:8002
-    deploy:
-      replicas: 1
+      - 8022:8081
 
   logging-service3:
     image: logging-service:1.0
     container_name: logging-service3
     environment:
-      - HAZELCAST_IP=192.168.0.13:5701
+      - HAZELCAST_IP=hazelcast3:5701
     networks:
-      service-network:
-        ipv4_address: 192.168.0.132
+      - service-network
     ports:
-      - 8032:8002
-    deploy:
-      replicas: 1
+      - 8032:8081
+
   hazelcast1:
     image: hazelcast/hazelcast
     container_name: hazelcast1
     environment:
       - LOGGING_LEVEL=INFO
       - JAVA_OPTS=-Dhazelcast.config=/opt/hazelcast/config_ext/hazelcast.yaml
-    networks:
-      service-network:
-        ipv4_address: 192.168.0.11
     volumes:
       - ./hazelcast.yaml:/opt/hazelcast/config_ext/hazelcast.yaml
+    networks:
+      - service-network
     ports:
       - 5701:5701
-    deploy:
-      replicas: 1
 
   hazelcast2:
     image: hazelcast/hazelcast
@@ -83,15 +66,12 @@ services:
     environment:
       - LOGGING_LEVEL=INFO
       - JAVA_OPTS=-Dhazelcast.config=/opt/hazelcast/config_ext/hazelcast.yaml
-    networks:
-      service-network:
-        ipv4_address: 192.168.0.12
     volumes:
       - ./hazelcast.yaml:/opt/hazelcast/config_ext/hazelcast.yaml
+    networks:
+      - service-network
     ports:
       - 5702:5701
-    deploy:
-      replicas: 1
 
   hazelcast3:
     image: hazelcast/hazelcast
@@ -99,15 +79,12 @@ services:
     environment:
       - LOGGING_LEVEL=INFO
       - JAVA_OPTS=-Dhazelcast.config=/opt/hazelcast/config_ext/hazelcast.yaml
-    networks:
-      service-network:
-        ipv4_address: 192.168.0.13
     volumes:
       - ./hazelcast.yaml:/opt/hazelcast/config_ext/hazelcast.yaml
+    networks:
+      - service-network
     ports:
       - 5703:5701
-    deploy:
-      replicas: 1
 
   hazelcast-management-center:
     image: hazelcast/management-center
@@ -116,12 +93,9 @@ services:
       - MC_DEFAULT_CLUSTER=dev
       - MC_DEFAULT_CLUSTER_MEMBERS=hazelcast1,hazelcast2,hazelcast3
     networks:
-      service-network:
-        ipv4_address: 192.168.0.14
+      - service-network
     ports:
       - 8080:8080
-    deploy:
-      replicas: 1
 
 networks:
   service-network:

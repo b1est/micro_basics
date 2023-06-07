@@ -4,8 +4,8 @@ import random
 import uuid
 
 # Define the URLs for the logging and messages services
-logging_service_url = ['http://localhost:8081/log', 'http://localhost::8083/log', 'http://localhost::8082/log']
-messages_service_url = 'http://localhost::8084/msg'
+logging_service_url = ['http://logging-service1:8081/log', 'http://logging-service2::8081/log', 'http://logging-service3::8081/log']
+messages_service_url = 'http://messages-service:8000/msg'
 
 app = Flask(__name__)
 
@@ -42,4 +42,4 @@ def get_messages():
 
 
 if __name__ == '__main__':
-    app.run(host = "localhost", port=5000)
+    app.run(host = "0.0.0.0", port=5000, debug=True)

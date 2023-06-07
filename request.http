@@ -7,4 +7,4 @@ Content-Type: application/json
 
 ###
 
-GET http://192.168.0.101:5000/facade_service
+GET http://localhost:5000/facade_service
