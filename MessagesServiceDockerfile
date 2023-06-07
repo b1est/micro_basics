@@ -6,6 +6,6 @@ COPY src/messages_service.py .
 
 RUN pip install flask
 
-EXPOSE 8081
+EXPOSE 8000
 
 CMD ["python", "messages_service.py"]
