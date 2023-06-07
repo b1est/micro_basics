@@ -4,4 +4,4 @@ hazelcast:
       backup-count: 1
   queue:
     queue:
-      max-size: 5
+      max-size: 100
