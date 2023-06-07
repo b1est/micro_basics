@@ -6,6 +6,4 @@ COPY src/facade_service.py .
 
 RUN pip install flask hazelcast requests uuid
 
-EXPOSE 5000
-
 CMD ["python", "facade_service.py"]
