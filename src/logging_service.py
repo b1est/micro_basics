@@ -3,6 +3,8 @@ from hazelcast import HazelcastClient
 import logging
 import os
 
+logging.basicConfig(level=logging.DEBUG)
+
 app = Flask(__name__)
 
 

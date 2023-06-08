@@ -1,9 +1,10 @@
 from flask import Flask, jsonify
 from hazelcast import HazelcastClient
-import multiprocessing as mp
 import threading
 import logging
 import os
+
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 
@@ -34,12 +35,6 @@ if __name__ == '__main__':
             ]
     )
     queue = client.get_queue("queue").blocking()
-    
-    
-    # process = mp.Process(target=consumer_process)
-    # process.start()
-    # app.run(host = "0.0.0.0", port=8000, debug=True)
-    # process.join()
     
     consumer_thread = threading.Thread(target=consumer_process)
     consumer_thread.start()

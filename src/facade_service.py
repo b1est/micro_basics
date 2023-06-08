@@ -6,6 +6,8 @@ import random
 import uuid
 import os
 
+logging.basicConfig(level=logging.DEBUG)
+
 logging_service_url = ['http://logging-service1:8081/log', 'http://logging-service2:8081/log', 'http://logging-service3:8081/log']
 messages_service_url = ['http://messages-service1:8000/msg', 'http://messages-service2:8000/msg']
 
