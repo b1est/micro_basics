@@ -28,19 +28,19 @@ def post_message():
 def get_messages():
     while True:
         try:
-            url_random = random.choice(logging_service_url)
-            app.logger.info(f"Send GET to logging-service ({url_random})")
-            logging_response = requests.get(url=url_random)
+            logging_url_random = random.choice(logging_service_url)
+            app.logger.info(f"Send GET to logging-service ({logging_url_random})")
+            logging_response = requests.get(url=logging_url_random)
         except requests.exceptions.ConnectionError:
             app.logger.error(f'GET request failed')
         else:
             break
    
-    url_random = random.choice(messages_service_url)
-    app.logger.info(f"Send GET to messages-service ({url_random})")
-    messages_response = requests.get(url_random)
+    messages_url_random = random.choice(messages_service_url)
+    app.logger.info(f"Send GET to messages-service ({messages_url_random})")
+    messages_response = requests.get(messages_url_random)
 
-    return jsonify(logging_response.json() + messages_response.json())
+    return make_response(f"Logging-service ({logging_url_random}) response: {logging_response.json()}\nMessages-service ({messages_url_random}) response: {messages_response.json()}")
 
 
 if __name__ == '__main__':
