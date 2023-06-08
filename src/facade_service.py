@@ -22,7 +22,7 @@ def post_message():
     url_random = random.choice(logging_service_url)
     app.logger.info(f"Send POST to logging-service ({url_random}) with data: {payload}")
     requests.post(url=url_random, data=payload)
-    queue.offer(payload)
+    queue.put(payload)
     return make_response(f"Success")
 
 
