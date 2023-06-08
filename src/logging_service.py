@@ -1,18 +1,23 @@
 from flask import Flask, jsonify, request, make_response
 from hazelcast import HazelcastClient
+import logging
 import os
+
 app = Flask(__name__)
 
 
 @app.route('/log', methods=['POST'])
 def post_message():
+    app.logger.info("POST request received.")
     msg_id = request.form.get('id')
     msg = request.form.get('msg')
     messages.put(msg_id, msg)
-    return make_response(f"Success: POST ({msg_id}, {msg})")
+    app.logger.info(f"Success: ({msg_id}, {msg}) put in the map")
+    return make_response(f"Success")
 
 @app.route('/log', methods=['GET'])
 def get_messages():
+    app.logger.info("GET request received.")
     return jsonify(list(messages.values()))
 
 if __name__ == '__main__':

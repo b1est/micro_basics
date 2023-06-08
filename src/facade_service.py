@@ -1,9 +1,10 @@
 from flask import Flask, jsonify, request, make_response
 from hazelcast import HazelcastClient
-import os
+import logging
 import requests
 import random
 import uuid
+import os
 
 logging_service_url = ['http://logging-service1:8081/log', 'http://logging-service2:8081/log', 'http://logging-service3:8081/log']
 messages_service_url = ['http://messages-service1:8000/msg', 'http://messages-service2:8000/msg']
@@ -17,8 +18,9 @@ def post_message():
     msg_id = str(uuid.uuid4())
     payload = {'id': msg_id, 'msg': msg}
     url_random = random.choice(logging_service_url)
+    app.logger.info(f"Send POST to logging-service ({url_random}) with data: {payload}")
     requests.post(url=url_random, data=payload)
-    queue.put(payload)
+    queue.offer(payload)
     return make_response(f"Success")
 
 
@@ -26,13 +28,17 @@ def post_message():
 def get_messages():
     while True:
         try:
-            logging_response = requests.get(url=random.choice(logging_service_url))
+            url_random = random.choice(logging_service_url)
+            app.logger.info(f"Send GET to logging-service ({url_random})")
+            logging_response = requests.get(url=url_random)
         except requests.exceptions.ConnectionError:
-            pass
+            app.logger.error(f'GET request failed')
         else:
             break
    
-    messages_response = requests.get(random.choice(messages_service_url))
+    url_random = random.choice(messages_service_url)
+    app.logger.info(f"Send GET to messages-service ({url_random})")
+    messages_response = requests.get(url_random)
 
     return jsonify(logging_response.json() + messages_response.json())
 

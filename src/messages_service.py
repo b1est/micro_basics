@@ -1,21 +1,30 @@
 from flask import Flask, jsonify
 from hazelcast import HazelcastClient
 import multiprocessing as mp
+import threading
+import logging
 import os
 
 app = Flask(__name__)
 
 @app.route('/msg', methods=['GET'])
 def get_messages():
-    return jsonify(list(dict.values()))
+    app.logger.info("GET request received.")
+    msgs = list(dict.values())
+    app.logger.info(f"messages: {msgs}")
+    return jsonify(msgs)
 
-
-
-def con_process():
+def consumer_process():
+    app.logger.info(f"TEST")
     while True:
         if not queue.is_empty():
             head = queue.take()
-            dict.update({head['uuid']: head['message']})
+            new_dict = {head['id']: head['msg']}
+            dict.update(new_dict)
+            app.logger.info(f"Received: {new_dict}")
+            app.logger.info(f"All messages: {dict}")
+
+
 
 if __name__ == '__main__':
     dict = {}
@@ -26,7 +35,9 @@ if __name__ == '__main__':
     )
     queue = client.get_queue("queue").blocking()
     
-    process = mp.Process(target=con_process)
+    
+    process = mp.Process(target=consumer_process)
     process.start()
     app.run(host = "0.0.0.0", port=8000, debug=True)
     process.join()
+   
