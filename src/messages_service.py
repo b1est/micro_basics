@@ -16,7 +16,6 @@ def get_messages():
     return jsonify(msgs)
 
 def consumer_process():
-    app.logger.info(f"TEST")
     while True:
         if not queue.is_empty():
             head = queue.take()
