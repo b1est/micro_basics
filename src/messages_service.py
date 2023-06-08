@@ -12,7 +12,7 @@ app = Flask(__name__)
 def get_messages():
     app.logger.info("GET request received.")
     msgs = list(dict.values())
-    app.logger.info(f"messages: {msgs}")
+    app.logger.info(f"Messages: {msgs}.")
     return jsonify(msgs)
 
 def consumer_process():
@@ -21,9 +21,8 @@ def consumer_process():
             head = queue.take()
             new_dict = {head['id']: head['msg']}
             dict.update(new_dict)
-            app.logger.info(f"Received: {new_dict}")
-            app.logger.info(f"All messages: {dict}")
-
+            app.logger.info(f"Received: {new_dict}.")
+            app.logger.info(f"All messages: {dict}.")
 
 
 if __name__ == '__main__':

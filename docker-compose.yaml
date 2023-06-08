@@ -18,7 +18,7 @@ services:
     image: messages-service:1.0
     container_name: messages-service1
     environment:
-      - HAZELCAST_IP=hazelcast1:5701
+      - HAZELCAST_IP=hazelcast2:5701
     networks:
       - service-network
     ports:
@@ -31,7 +31,7 @@ services:
     image: messages-service:1.0
     container_name: messages-service2
     environment:
-      - HAZELCAST_IP=hazelcast1:5701
+      - HAZELCAST_IP=hazelcast3:5701
     networks:
       - service-network
     ports:

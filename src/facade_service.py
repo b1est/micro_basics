@@ -22,6 +22,7 @@ def post_message():
     url_random = random.choice(logging_service_url)
     app.logger.info(f"Send POST to logging-service ({url_random}) with data: {payload}")
     requests.post(url=url_random, data=payload)
+    app.logger.info(f"Put {payload} in the queue.")
     queue.put(payload)
     return make_response(f"Success")
 
@@ -31,18 +32,18 @@ def get_messages():
     while True:
         try:
             logging_url_random = random.choice(logging_service_url)
-            app.logger.info(f"Send GET to logging-service ({logging_url_random})")
+            app.logger.info(f"Send GET to logging-service ({logging_url_random}).")
             logging_response = requests.get(url=logging_url_random)
         except requests.exceptions.ConnectionError:
-            app.logger.error(f'GET request failed')
+            app.logger.error(f'GET request failed.')
         else:
             break
    
     messages_url_random = random.choice(messages_service_url)
-    app.logger.info(f"Send GET to messages-service ({messages_url_random})")
+    app.logger.info(f"Send GET to messages-service ({messages_url_random}).")
     messages_response = requests.get(messages_url_random)
-
-    return make_response(f"Logging-service ({logging_url_random}) response: {logging_response.json()}\nMessages-service ({messages_url_random}) response: {messages_response.json()}")
+    app.logger.info(f"Logging-service ({logging_url_random}) response: {logging_response.json()}\nMessages-service ({messages_url_random}) response: {messages_response.json()}.")
+    return make_response(f"Logging-service ({logging_url_random}) response: {logging_response.json()}\nMessages-service ({messages_url_random}) response: {messages_response.json()}.")
 
 
 if __name__ == '__main__':

@@ -13,8 +13,9 @@ def post_message():
     app.logger.info("POST request received.")
     msg_id = request.form.get('id')
     msg = request.form.get('msg')
+    app.logger.info(f"Put key-value {msg_id}-{msg} in the map.")
     messages.put(msg_id, msg)
-    app.logger.info(f"Success: ({msg_id}, {msg}) put in the map")
+    app.logger.info(f"Success: ({msg_id}, {msg}) put in the map.")
     return make_response(f"Success")
 
 @app.route('/log', methods=['GET'])
@@ -28,6 +29,6 @@ if __name__ == '__main__':
                 os.getenv("HAZELCAST_IP")
             ]
     )
+
     messages = client.get_map("messages").blocking()
-    app.run(host = "0.0.0.0", port=8081, debug=True)
-    
+    app.run(host = "0.0.0.0", port=8081, debug=True)    
