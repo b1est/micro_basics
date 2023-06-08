@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, make_response
 from hazelcast import HazelcastClient
+from time import sleep
 import logging
 import requests
 import random
@@ -24,6 +25,7 @@ def post_message():
     requests.post(url=url_random, data=payload)
     app.logger.info(f"Put {payload} in the queue.")
     queue.put(payload)
+    sleep(5)
     return make_response(f"Success")
 
 
@@ -54,3 +56,4 @@ if __name__ == '__main__':
     )
     queue = client.get_queue("queue").blocking()
     app.run(host = "0.0.0.0", port=5000, debug=True)
+    client.shutdown()

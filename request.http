@@ -8,3 +8,12 @@ Content-Type: application/json
 ###
 
 GET http://localhost:5000/facade_service
+
+
+###
+
+GET http://localhost:8003/msg
+
+###
+
+GET http://localhost:8004/msg
