@@ -1,9 +1,11 @@
 FROM python:3
 
+RUN pip install flask hazelcast-python-client python-consul uuid
+
 WORKDIR /app
 
 COPY src/messages_service.py .
 
-RUN pip install flask hazelcast-python-client
+
 
 CMD ["python", "messages_service.py"]

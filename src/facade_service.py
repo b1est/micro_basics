@@ -4,7 +4,9 @@ import logging
 import requests
 import random
 import uuid
-import os
+import docker
+import consul
+import time
 
 logging.basicConfig(level=logging.INFO)
 
@@ -19,11 +21,12 @@ def post_message():
     msg = request.json['msg']
     msg_id = str(uuid.uuid4())
     payload = {'id': msg_id, 'msg': msg}
-    url_random = random.choice(logging_service_url)
-    requests.post(url=url_random, data=payload)
-    app.logger.info(f"Message '{payload['id']}' sent to {url_random}")
-    queue.put(payload)
-    app.logger.info(f"Message '{payload['id']}' added to hazelcast queue")
+    print(get_services_address('logging'))
+    # url_random = random.choice(logging_service_url)
+    # requests.post(url=url_random, data=payload)
+    # app.logger.info(f"Message '{payload['id']}' sent to {url_random}")
+    # queue.put(payload)
+    # app.logger.info(f"Message '{payload['id']}' added to hazelcast queue")
     return make_response(f"Success")
 
 
@@ -46,13 +49,28 @@ def get_messages():
     app.logger.info(f"Logging-service ({logging_url_random}) response: {logging_response.json()}\nMessages-service ({messages_url_random}) response: {messages_response.json()}.")
     return make_response(f"Logging-service ({logging_url_random}) response: {logging_response.json()}\nMessages-service ({messages_url_random}) response: {messages_response.json()}.")
 
+def get_services_address(service_name):
+    index, req = consul_client.health.service(service_name)
+    app.logger.info(req)
+    list_with_services = []
+    for element in req:
+        address = element.get('Service').get('Address')
+        port = element.get('Service').get('Port')
+        list_with_services.append(address + ":" + str(port))
+    app.logger.info(f"List addresses: '{list_with_services}'")
 
 if __name__ == '__main__':
+    consul_client = consul.Consul('consul-server')
+    consul_client.agent.service.register(name='facade', port=5000)
+    hazelcast_service = str(consul_client.kv.get('app/config/all-hazelcast-instances')[1]['Value'])[2:-1].split(',')
+    
+    
     client = HazelcastClient(
-            cluster_members=[
-                os.getenv("HAZELCAST_IP")
-            ]
+            cluster_members=hazelcast_service
     )
     queue = client.get_queue("queue").blocking()
+    client = docker.DockerClient('tcp://127.0.0.1:1234')
+    container = client.containers.get('facade-service')
+    print(container.attrs.get("NetworkSettings", {}).get("Networks", {}).get('service-network', {}).get("IPAddress"))
     app.run(host = "0.0.0.0", port=5000, debug=False)
     client.shutdown()
