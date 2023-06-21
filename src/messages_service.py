@@ -2,7 +2,9 @@ from flask import Flask, jsonify
 from hazelcast import HazelcastClient
 import threading
 import logging
-import os
+import uuid
+import consul
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -10,7 +12,7 @@ app = Flask(__name__)
 
 lock = threading.Lock()
 
-@app.route('/msg', methods=['GET'])
+@app.route('/messages_service', methods=['GET'])
 def get_messages():
     with lock:
         msgs = list(dictionary.values())
@@ -33,10 +35,12 @@ def consumer_process():
 
 if __name__ == '__main__':
     
+    consul_client = consul.Consul('consul-server')
+    
+    consul_client.agent.service.register(name='messages-service', service_id='messages-service-'+str(uuid.uuid4()), port=8000)
+    hazelcast_service = str(consul_client.kv.get('app/config/all-hazelcast-instances')[1]['Value'])[2:-1].split(',')
     client = HazelcastClient(
-        cluster_members=[
-                os.getenv("HAZELCAST_IP")
-            ]
+            cluster_members=hazelcast_service
     )
     queue = client.get_queue("queue").blocking()
     consumer_thread = threading.Thread(target=consumer_process)

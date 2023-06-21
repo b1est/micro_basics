@@ -1,9 +1,10 @@
 FROM python:3
 
+RUN pip install flask hazelcast-python-client requests uuid python-consul docker
+
 WORKDIR /app
 
 COPY src/facade_service.py .
 
-RUN pip install flask hazelcast-python-client requests uuid
 
 CMD ["python", "facade_service.py"]
