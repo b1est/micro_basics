@@ -50,7 +50,7 @@ services:
     deploy:
       replicas: 1
     depends_on:
-      consul-add-kv-data:
+      add-kv-data:
         condition: service_completed_successfully
 
   messages-service:
@@ -62,7 +62,7 @@ services:
     deploy:
       replicas: 2
     depends_on:
-      consul-add-kv-data:
+      add-kv-data:
         condition: service_completed_successfully
   
   logging-service:
@@ -76,7 +76,7 @@ services:
     deploy:
       replicas: 3
     depends_on:
-      consul-add-kv-data:
+      add-kv-data:
         condition: service_completed_successfully
 
   
