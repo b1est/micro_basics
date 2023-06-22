@@ -34,7 +34,7 @@ services:
     command:
       - |
         export CONSUL_HTTP_ADDR=192.168.0.10:8500
-        consul kv put app/config/all-hazelcast-instances "hazelcast1:5701,hazelcast2:5701,hazelcast3:5701"
+        consul kv put app/config/hazelcast/instances "hazelcast1:5701,hazelcast2:5701,hazelcast3:5701"
         consul kv put app/config/hazelcast/map/name "messages"
         consul kv put app/config/hazelcast/queue/name "queue"
 

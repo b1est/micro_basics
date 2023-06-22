@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, request, make_response
 from hazelcast import HazelcastClient
+import netifaces as ni
 import logging
 import consul
 import uuid
-
 
 logging.basicConfig(level=logging.INFO)
 
@@ -26,12 +26,17 @@ def get_messages():
 if __name__ == '__main__':
 
     consul_client = consul.Consul('consul-server')
-    
-    consul_client.agent.service.register(name='logging-service', service_id='logging-service-'+str(uuid.uuid4()), port=8081)
-    hazelcast_service = str(consul_client.kv.get('app/config/all-hazelcast-instances')[1]['Value'])[2:-1].split(',')
+
+    ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
+
+    consul_client.agent.service.register(name='logging_service', address=ip, service_id='logging-service-'+str(uuid.uuid4()),  port=8081)
+
+    hazelcast_service = consul_client.kv.get('app/config/hazelcast/instances')[1]['Value'].decode('utf-8').split(',')
+    hazelcast_map_name = consul_client.kv.get('app/config/hazelcast/map/name')[1]['Value'].decode('utf-8')
+
     client = HazelcastClient(
             cluster_members=hazelcast_service
     )
-    messages = client.get_map("messages").blocking()
+    messages = client.get_map(hazelcast_map_name).blocking()
     app.run(host = "0.0.0.0", port=8081, debug=False)
     client.shutdown()

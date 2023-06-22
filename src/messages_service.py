@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from hazelcast import HazelcastClient
+import netifaces as ni
 import threading
 import logging
 import uuid
@@ -37,12 +38,16 @@ if __name__ == '__main__':
     
     consul_client = consul.Consul('consul-server')
     
-    consul_client.agent.service.register(name='messages-service', service_id='messages-service-'+str(uuid.uuid4()), port=8000)
-    hazelcast_service = str(consul_client.kv.get('app/config/all-hazelcast-instances')[1]['Value'])[2:-1].split(',')
+    ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
+    
+    consul_client.agent.service.register(name='messages_service', address=ip, service_id='messages-service-'+str(uuid.uuid4()), port=8000)
+    hazelcast_service = consul_client.kv.get('app/config/hazelcast/instances')[1]['Value'].decode('utf-8').split(',')
+    hazelcast_queue_name = consul_client.kv.get('app/config/hazelcast/queue/name')[1]['Value'].decode('utf-8')
+    
     client = HazelcastClient(
             cluster_members=hazelcast_service
     )
-    queue = client.get_queue("queue").blocking()
+    queue = client.get_queue(hazelcast_queue_name).blocking()
     consumer_thread = threading.Thread(target=consumer_process)
     consumer_thread.start()
     

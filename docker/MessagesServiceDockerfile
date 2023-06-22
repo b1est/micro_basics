@@ -1,6 +1,6 @@
 FROM python:3
 
-RUN pip install flask hazelcast-python-client python-consul uuid
+RUN pip install flask hazelcast-python-client python-consul uuid netifaces
 
 WORKDIR /app
 
